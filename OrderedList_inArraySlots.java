@@ -8,20 +8,89 @@
 
 public class OrderedList_inArraySlots
     implements OrderedList {
-
+      public int cost;
     private java.util.ArrayList<Integer> list_iAS;
 
 
     /**
-      @return the index any occurrence of 
+      @return the index of any occurrence of
               \findMe in this list, or -1 if
               \findMe is absent from this list.
      */
     public int indexOf( Integer findMe) {
-        return -32768; /* changing this value in 
-		  solutions will check the processing */
+        cost = 0;
+        // return indexOf_rec( findMe);
+        return indexOf_recursive(
+            findMe, 0, list_iAS.size() -1);
     }
-    
+
+
+    /**
+      @return the indexOf value, calculated while-style
+     */
+    private int indexOf_whileStyle( Integer findMe) {
+        int low = 0;
+        int hi  = list_iAS.size() -1;  // inclusive
+
+        while( low <= hi){
+            int pageToCheck = (low + hi) / 2;
+            int comparison =
+              findMe.compareTo( list_iAS.get( pageToCheck));
+            if( comparison == 0) return pageToCheck;
+            else
+                if( comparison < 0)
+                    // findMe's spot precedes pageToCheck
+                    hi = pageToCheck -1;
+                // findMe's spot follows pageToCheck
+                else low = pageToCheck +1;
+          cost +=1;
+        }
+        return -3; // value differs from skeleton, just FYI
+    }
+
+
+    /**
+      @return the indexOf value, calculated recursively
+      [Holmes's comments temporarily elided, so as
+       to avoid spoilers for hw60_16]
+     */
+    private int indexOf_recursive( Integer findMe
+                                 , int low
+                                 , int hi // inclusive
+                                 ) {
+        // System.out.println( "debug low: " + low
+                          // + "   hi: " + hi);
+
+        if( low > hi)  // detect base case
+            return -2;   // solution to base case
+              // value differs from while-style method, just FYI
+        else{
+            int pageToCheck = (low + hi) / 2;
+            int comparison =
+              findMe.compareTo( list_iAS.get( pageToCheck));
+
+
+            if( comparison == 0)    // detect base case
+                return pageToCheck; // solution other base case
+            // recursive cases
+            else
+                if( comparison < 0) {
+                    // findMe's spot precedes pageToCheck
+                    cost += 1;
+                    return indexOf_recursive( findMe
+                                             , low
+                                             , pageToCheck -1);
+                                           }
+                else {
+                    // findMe's spot follows pageToCheck
+                    cost += 1;
+                    return indexOf_recursive( findMe
+                                            , pageToCheck +1
+                                            , hi);
+                                          }
+        }
+    }
+
 
     // ------ code from previous assignments below here ----
 
@@ -81,5 +150,8 @@ public class OrderedList_inArraySlots
      */
     public Integer remove( int index) {
         return list_iAS.remove( index);
+    }
+    public int cost() {
+      return cost;
     }
 }
